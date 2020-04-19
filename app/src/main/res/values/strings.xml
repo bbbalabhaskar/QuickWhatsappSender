@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Quick Whatsapp Sender</string>
+
+    <!-- Menu titles -->
+    <string name="title_contacts">Contacts</string>
+    <string name="title_call_log">Call Logs</string>
+    <string name="title_dial">Dial</string>
+    <string name="mobile_number_to_send">Mobile Number to Send</string>
+    <string name="send">Send</string>
+    <string name="default_ctry_code">91</string>
+    <string name="exit_message">Please click BACK again to exit</string>
+</resources>

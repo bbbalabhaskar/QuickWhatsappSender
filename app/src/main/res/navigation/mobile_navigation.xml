@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/nav_dial_pad">
+
+    <fragment
+        android:id="@+id/nav_call_log"
+        android:name="com.sarada.quickwhatsappsender.ui.calllogs.CallLogFragment"
+        android:label="@string/title_contacts"
+        tools:layout="@layout/fragment_call_logs" />
+
+    <fragment
+        android:id="@+id/nav_dial_pad"
+        android:name="com.sarada.quickwhatsappsender.ui.dialpad.DialPadFragment"
+        android:label="@string/title_dial"
+        tools:layout="@layout/fragment_dial_pad" />
+</navigation>

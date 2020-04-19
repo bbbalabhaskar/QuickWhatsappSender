@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_call_log"
+        android:icon="@drawable/ic_call_black_24dp"
+        android:title="@string/title_call_log" />
+
+    <item
+        android:id="@+id/nav_dial_pad"
+        android:icon="@drawable/ic_dialpad_black_24dp"
+        android:title="@string/title_dial" />
+
+</menu>
