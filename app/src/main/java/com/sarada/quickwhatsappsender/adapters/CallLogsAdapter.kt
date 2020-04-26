@@ -34,10 +34,46 @@ class CallLogsAdapter(private val callLogs: List<CallLog>?) :
         val callLog = callLogs!![position]
         with(holder) {
             callDetailsTextView1.text = callLog.number
-            callDetailsTextView2.visibility = View.INVISIBLE
-            incomingImageView.visibility = View.INVISIBLE
-            outgoingImageView.visibility = View.INVISIBLE
-            missedImageView.visibility = View.INVISIBLE
+            contactedDate.text = callLog.dayTime
+
+            if (callLog.count == 1) {
+                callLogCounter.visibility = View.GONE
+            } else {
+                callLogCounter.visibility = View.VISIBLE
+                callLogCounter.text = String.format("(%d)", callLog.count)
+            }
+
+            if (callLog.number != callLog.name) {
+                callDetailsTextView2.visibility = View.VISIBLE
+                callDetailsTextView1.text = callLog.name
+                callDetailsTextView2.text = callLog.number
+            } else {
+                callDetailsTextView2.visibility = View.INVISIBLE
+            }
+
+         //   contactIconImageView.visibility = View.INVISIBLE
+            when (callLog.type) {
+                "Incoming" -> {
+                    incomingImageView.visibility = View.VISIBLE
+                    outgoingImageView.visibility = View.INVISIBLE
+                    missedImageView.visibility = View.INVISIBLE
+                }
+                "Outgoing" -> {
+                    incomingImageView.visibility = View.INVISIBLE
+                    outgoingImageView.visibility = View.VISIBLE
+                    missedImageView.visibility = View.INVISIBLE
+                }
+                "Missed" -> {
+                    incomingImageView.visibility = View.INVISIBLE
+                    outgoingImageView.visibility = View.INVISIBLE
+                    missedImageView.visibility = View.VISIBLE
+                }
+                else -> {
+                    incomingImageView.visibility = View.VISIBLE
+                    outgoingImageView.visibility = View.INVISIBLE
+                    missedImageView.visibility = View.INVISIBLE
+                }
+            }
         }
     }
 
@@ -48,7 +84,8 @@ class CallLogsAdapter(private val callLogs: List<CallLog>?) :
         val incomingImageView: ImageView = itemView.ic_call_ic
         val outgoingImageView: ImageView = itemView.ic_call_og
         val missedImageView: ImageView = itemView.ic_call_missed
-
+        val contactedDate: TextView = itemView.lbl_contacted_time
+        val callLogCounter: TextView = itemView.call_log_count
     }
 
 }

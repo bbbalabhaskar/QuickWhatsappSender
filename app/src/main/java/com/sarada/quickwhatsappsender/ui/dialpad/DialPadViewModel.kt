@@ -6,20 +6,14 @@ import androidx.lifecycle.ViewModel
 
 class DialPadViewModel : ViewModel() {
 
-    private val _mobileNumber = MutableLiveData<Long>()
-    private val _ctryCode = MutableLiveData<Int>().apply { value = 91 }
+    private val _mobileNumber = MutableLiveData<String>()
 
-    val mobileNumber: LiveData<Long> = _mobileNumber
-    val ctryCode: LiveData<Int> = _ctryCode
-
-    fun setCtryCode(ctryCode: Int) {
-        this._ctryCode.postValue(ctryCode)
-    }
+    val mobileNumber: LiveData<String> = _mobileNumber
 
     fun setMobileNumber(mobileNumber: String) {
-        _mobileNumber.postValue(mobileNumber.toLong())
+        _mobileNumber.postValue(mobileNumber)
     }
 
-    fun getUri() = "https://wa.me/" + ctryCode.value + mobileNumber.value
+    fun getUri() = "https://wa.me/" + mobileNumber.value
 
 }

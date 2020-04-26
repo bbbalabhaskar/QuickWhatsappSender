@@ -3,8 +3,6 @@ package com.sarada.quickwhatsappsender.ui.calllogs
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.net.Uri
-import android.provider.ContactsContract
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,7 +19,7 @@ class CallLogViewModel : ViewModel() {
         callLogs.value = ArrayList()
     }
 
-     fun updateCallData(context: Context) {
+    fun updateCallData(context: Context) {
 
         val contentUri = android.provider.CallLog.Calls.CONTENT_URI;
 
@@ -30,15 +28,17 @@ class CallLogViewModel : ViewModel() {
                 Manifest.permission.READ_CALL_LOG
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            val contactsCursor = context.contentResolver.query(contentUri, null, null, null, null)
+            val contactsCursor =
+                context.contentResolver.query(contentUri, null, null, null, "date DESC")
             contactsCursor.use { cursor ->
+
                 val nameUri =
-                    cursor?.getColumnIndex(android.provider.CallLog.Calls.CACHED_LOOKUP_URI)
+                    cursor?.getColumnIndex(android.provider.CallLog.Calls.CACHED_NAME)
                 val number = cursor?.getColumnIndex(android.provider.CallLog.Calls.NUMBER)
                 val duration = cursor?.getColumnIndex(android.provider.CallLog.Calls.DURATION)
                 val date = cursor?.getColumnIndex(android.provider.CallLog.Calls.DATE)
                 val type = cursor?.getColumnIndex(android.provider.CallLog.Calls.TYPE)
-
+                var index = 0;
                 if (cursor?.moveToFirst()!!) {
                     do {
                         val callType = when (type?.let { cursor.getInt(it) }) {
@@ -49,46 +49,61 @@ class CallLogViewModel : ViewModel() {
                             else -> "Not Defined"
                         }
                         val phoneNumber = cursor.getString(number!!)
-                        val callerNameUri = cursor.getString(nameUri!!)
+                        val callerName = nameUri?.let { cursor.getString(it) }
                         val callDate = cursor.getString(date!!)
                         val callDateTime = Date(callDate.toLong()).toString()
                         val callDuration = cursor.getString(duration!!)
 
-                        callLogs.value?.add(
-                            CallLog(
-                                getCallerName(context, callerNameUri, phoneNumber),
+                        if (!callLogs.value?.isEmpty()!!) {
+                            val log = callLogs.value?.last()
+                            if (log != null && log.number == phoneNumber) {
+                                log.count++
+                                index--
+                            } else {
+                                updateCallLogList(
+                                    callerName,
+                                    phoneNumber,
+                                    callDuration,
+                                    callType,
+                                    callDateTime
+                                )
+                            }
+                        } else {
+                            updateCallLogList(
+                                callerName,
                                 phoneNumber,
                                 callDuration,
                                 callType,
                                 callDateTime
                             )
-                        )
-                    } while (cursor.moveToNext())
+                        }
+
+                    } while (cursor.moveToNext() && index++ <= 100) //limiting total contacts to 100
+                    //TODO implement lazyloading.
                 }
             }
 
         }
     }
 
-    private fun getCallerName(context: Context, callerNameUri: String?, phoneNumber: String): String {
-
-        return if (callerNameUri != null) {
-            var name = ""
-            val contactsCursor =
-                context.contentResolver.query(Uri.parse(callerNameUri), null, null, null, null)
-
-            contactsCursor?.use {
-                if (contactsCursor.count > 0) {
-                    while (contactsCursor.moveToNext()) {
-                        name =
-                            contactsCursor.getString(contactsCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
-                    }
-                }
-            }
-            return name
-        } else {
-            phoneNumber
-        }
+    private fun updateCallLogList(
+        callerName: String?,
+        phoneNumber: String,
+        callDuration: String,
+        callType: String,
+        callDateTime: String
+    ) {
+        callLogs.value?.add(
+            CallLog(
+                callerName ?: phoneNumber,
+                phoneNumber,
+                callDuration,
+                callType,
+                callDateTime,
+                1
+            )
+        )
     }
+
 
 }

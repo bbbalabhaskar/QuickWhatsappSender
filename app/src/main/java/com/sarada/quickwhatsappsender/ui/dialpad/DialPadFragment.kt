@@ -23,7 +23,6 @@ class DialPadFragment : Fragment() {
 
     private lateinit var dialPadViewModel: DialPadViewModel
     private lateinit var mobileNumberTextEditText: EditText
-    private lateinit var ctryCodeEditText: EditText
     private lateinit var sendBtn: Button
 
     companion object {
@@ -46,7 +45,6 @@ class DialPadFragment : Fragment() {
 
     private fun initViews(root: View) {
         mobileNumberTextEditText = root.findViewById(R.id.mobile_number_text)
-        ctryCodeEditText = root.findViewById(R.id.country_code_text)
         sendBtn = root.findViewById(R.id.btn_dial_pad_send_message)
     }
 
@@ -57,8 +55,12 @@ class DialPadFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                initCtryCode()
-                s?.toString()?.let { dialPadViewModel.setMobileNumber(it) }
+                s?.toString()?.let {
+                    mobileNumberTextEditText.error = null
+                    if (isValidMobileNumber(it)) {
+                        dialPadViewModel.setMobileNumber(it)
+                    }
+                }
             }
         })
 
@@ -76,30 +78,28 @@ class DialPadFragment : Fragment() {
         }
 
         sendBtn.setOnClickListener {
-            if (dialPadViewModel.mobileNumber.value.toString().length == 10) {
-                val uri = dialPadViewModel.getUri()
-                val browserIntent =
-                    Intent(Intent.ACTION_VIEW, Uri.parse(uri))
 
+            if (isValidMobileNumber(dialPadViewModel.mobileNumber.value.toString())) {
+                mobileNumberTextEditText.error = null
+                val uri = dialPadViewModel.getUri()
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
                 startActivity(browserIntent)
+            } else {
+                mobileNumberTextEditText.error = "Mobile number is not valid!"
             }
 
         }
+
     }
 
     private fun setMobileNumber(mobileNumber: String) {
-        if (mobileNumber.matches(Regex("""[0-9]{10}"""))) {
-            initCtryCode()
+        if (isValidMobileNumber(mobileNumber)) {
             mobileNumberTextEditText.setText(mobileNumber)
-        } else if (mobileNumber.matches(Regex("""(\+)[0-9]{12}"""))) {
-            ctryCodeEditText.setText(mobileNumber.substring(1, 3))
-            mobileNumberTextEditText.setText(mobileNumber.substring(3))
         }
+
     }
 
-    private fun initCtryCode() {
-        if (TextUtils.isEmpty(ctryCodeEditText.text)) {
-            ctryCodeEditText.setText(getString(R.string.default_ctry_code))
-        }
-    }
+    private fun isValidMobileNumber(mobileNumber: String) =
+        mobileNumber.matches(Regex("""(\+)[0-9]{12}"""))
+
 }
