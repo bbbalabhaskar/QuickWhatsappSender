@@ -4,32 +4,43 @@ import android.os.Bundle
 import android.os.Handler
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.view.get
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.tabs.TabLayoutMediator.TabConfigurationStrategy
+import com.sarada.quickwhatsappsender.adapters.MainViewPagerAdapter
+
 
 class MainActivity : AppCompatActivity() {
 
     private var doubleBackToExitPressedOnce = false
-    private lateinit var navController: NavController
+
+    private lateinit var mainTabLayout: TabLayout
+    private lateinit var mainViewPager: ViewPager2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val navView: BottomNavigationView = findViewById(R.id.nav_view)
-        navController = Navigation.findNavController(this, R.id.nav_host_fragment)
+        mainViewPager = findViewById(R.id.main_view_pager)
+        mainTabLayout = findViewById(R.id.main_nav_tabs)
 
-        navView.setupWithNavController(navController)
+        mainViewPager.adapter = createPagerAdapter()
 
-        setupActionBarWithNavController(navController, AppBarConfiguration(
-            setOf(R.id.nav_call_log, R.id.nav_dial_pad)
-        ))
+        TabLayoutMediator(mainTabLayout, mainViewPager,
+            TabConfigurationStrategy { tab, position ->
+                tab.text = if ( position == 0 ) {
+                    getString(R.string.title_dial)
+                } else {
+                    getString(R.string.title_call_log)
+                }
+
+                val tetView = tab.view[1] as AppCompatTextView
+                tetView.textSize = 36.0f
+                mainViewPager.setCurrentItem(tab.position, true)
+            }).attach()
     }
 
     override fun onBackPressed() {
@@ -43,15 +54,7 @@ class MainActivity : AppCompatActivity() {
         Handler().postDelayed({ doubleBackToExitPressedOnce = false }, 2000)
     }
 
-    //Setting Up the back button
-    override fun onSupportNavigateUp(): Boolean {
-        return NavigationUI.navigateUp(navController, null)
-    }
+    private fun createPagerAdapter() = MainViewPagerAdapter(this)
 
-    private fun openFragment(fragment: Fragment) {
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.container, fragment)
-        transaction.addToBackStack(null)
-        transaction.commit()
-    }
+
 }

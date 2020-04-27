@@ -1,7 +1,6 @@
 package com.sarada.quickwhatsappsender.adapters
 
 import android.content.Context
-import android.opengl.Visibility
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,9 +9,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sarada.quickwhatsappsender.R
 import com.sarada.quickwhatsappsender.models.CallLog
+import com.sarada.quickwhatsappsender.ui.calllogs.CallLogFragment
+import com.sarada.quickwhatsappsender.utils.TimeAgo
 import kotlinx.android.synthetic.main.item_call_log.view.*
 
-class CallLogsAdapter(private val callLogs: List<CallLog>?) :
+class CallLogsAdapter(
+    private val callLogs: List<CallLog>?,
+    private val callLogFragment: CallLogFragment
+) :
     RecyclerView.Adapter<CallLogsAdapter.ViewHolder>() {
 
     private var context: Context? = null
@@ -34,7 +38,7 @@ class CallLogsAdapter(private val callLogs: List<CallLog>?) :
         val callLog = callLogs!![position]
         with(holder) {
             callDetailsTextView1.text = callLog.number
-            contactedDate.text = callLog.dayTime
+            contactedDate.text = TimeAgo.getTimeAgo(callLog.dayTime)
 
             if (callLog.count == 1) {
                 callLogCounter.visibility = View.GONE
@@ -51,7 +55,7 @@ class CallLogsAdapter(private val callLogs: List<CallLog>?) :
                 callDetailsTextView2.visibility = View.INVISIBLE
             }
 
-         //   contactIconImageView.visibility = View.INVISIBLE
+            //   contactIconImageView.visibility = View.INVISIBLE
             when (callLog.type) {
                 "Incoming" -> {
                     incomingImageView.visibility = View.VISIBLE
@@ -74,7 +78,13 @@ class CallLogsAdapter(private val callLogs: List<CallLog>?) :
                     missedImageView.visibility = View.INVISIBLE
                 }
             }
+
+            bind(callLog, {
+                callLogFragment.callLogSelected(callLog)
+            })
+
         }
+
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -86,6 +96,12 @@ class CallLogsAdapter(private val callLogs: List<CallLog>?) :
         val missedImageView: ImageView = itemView.ic_call_missed
         val contactedDate: TextView = itemView.lbl_contacted_time
         val callLogCounter: TextView = itemView.call_log_count
+
+        fun bind(callLog: CallLog, clickListener: (CallLog) -> Unit) {
+
+            itemView.setOnClickListener { clickListener(callLog) }
+        }
+
     }
 
 }

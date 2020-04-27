@@ -2,8 +2,7 @@
     <string name="app_name">Quick Whatsapp Sender</string>
 
     <!-- Menu titles -->
-    <string name="title_contacts">Contacts</string>
-    <string name="title_call_log">Call Logs</string>
+    <string name="title_call_log">Recent</string>
     <string name="title_dial">Dial</string>
     <string name="mobile_number_to_send">Mobile Number to Send</string>
     <string name="send">Send</string>

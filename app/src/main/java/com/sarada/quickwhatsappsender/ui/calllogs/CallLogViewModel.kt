@@ -51,7 +51,7 @@ class CallLogViewModel : ViewModel() {
                         val phoneNumber = cursor.getString(number!!)
                         val callerName = nameUri?.let { cursor.getString(it) }
                         val callDate = cursor.getString(date!!)
-                        val callDateTime = Date(callDate.toLong()).toString()
+                        val callDateTime = callDate.toLong()
                         val callDuration = cursor.getString(duration!!)
 
                         if (!callLogs.value?.isEmpty()!!) {
@@ -91,7 +91,7 @@ class CallLogViewModel : ViewModel() {
         phoneNumber: String,
         callDuration: String,
         callType: String,
-        callDateTime: String
+        callDateTime: Long
     ) {
         callLogs.value?.add(
             CallLog(

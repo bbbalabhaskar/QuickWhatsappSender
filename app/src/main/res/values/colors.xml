@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorPrimary">#000000</color>
+    <color name="colorPrimaryDark">#999999</color>
+    <color name="selectedTextDark">#919191</color>
+    <color name="textLight">#222222</color>
     <color name="colorAccent">#D81B60</color>
+
+    <color name="call_button">#8cc34c</color>
+    <color name="generic_button_ripple">#777</color>
+    <color name="text_color">#bbb</color>
+    <color name="call_button_ripple">#7cb33c</color>
+
 </resources>

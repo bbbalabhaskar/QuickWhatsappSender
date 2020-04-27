@@ -5,6 +5,6 @@ data class CallLog(
     val number: String,
     val duration: String,
     val type: String,
-    val dayTime: String,
+    val dayTime: Long,
     var count: Int
 )

@@ -1,7 +1,9 @@
 package com.sarada.quickwhatsappsender.ui.calllogs
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -90,7 +92,7 @@ class CallLogFragment : Fragment() {
         root: View
     ) {
         root.let {
-            callLogsAdapter = CallLogsAdapter(callLogs)
+            callLogsAdapter = CallLogsAdapter(callLogs, this)
 
             callLogsRecyclerView = it.findViewById(R.id.rc_call_logs)
             callLogsRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -99,5 +101,12 @@ class CallLogFragment : Fragment() {
 
         }
     }
+
+    fun callLogSelected(callLog: CallLog) {
+        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(getUri(callLog)))
+        startActivity(browserIntent)
+    }
+
+    private fun getUri(callLog: CallLog) = "https://wa.me/" + callLog.number
 
 }
